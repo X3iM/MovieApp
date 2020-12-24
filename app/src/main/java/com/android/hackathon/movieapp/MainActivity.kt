@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity() {
     inner class SliderTask : TimerTask() {
 
         override fun run() {
-            runOnUiThread(Runnable {
+            runOnUiThread {
                 if (slidePager.currentItem < slideList.size - 1)
                     slidePager.currentItem = slidePager.currentItem + 1
                 else
                     slidePager.currentItem = 0
-            })
+            }
         }
 
     }
