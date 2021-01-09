@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import com.android.hackathon.movieapp.R
 import com.android.hackathon.movieapp.models.Slide
+import com.bumptech.glide.Glide
 
 class SliderPagerAdapter(private var context: Context, private var list : List<Slide>) : PagerAdapter() {
 
@@ -22,7 +23,8 @@ class SliderPagerAdapter(private var context: Context, private var list : List<S
         val slideLayout = inflater.inflate(R.layout.slide_item, null)
 
         val imageView = slideLayout.findViewById<ImageView>(R.id.slide_image)
-        imageView.setImageResource(list[position].image)
+        Glide.with(context).load(list[position].image).into(imageView)
+
         val text = slideLayout.findViewById<TextView>(R.id.slide_title)
         text.text = list[position].title
 

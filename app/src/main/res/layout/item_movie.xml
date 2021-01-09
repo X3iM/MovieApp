@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="125dp"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="8dp">
 
     <ImageView
         android:id="@+id/item_movie_image"
@@ -16,13 +17,19 @@
 
     <TextView
         android:id="@+id/item_movie_title"
+        android:layout_marginHorizontal="2dp"
         android:layout_width="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:layout_height="wrap_content"
+        android:text="Title"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_movie_image"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="24sp"
-        android:text="Title" />
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

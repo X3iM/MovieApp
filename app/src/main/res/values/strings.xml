@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MovieApp</string>
+    <string name="movie_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.</string>
 </resources>
