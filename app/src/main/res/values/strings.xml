@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">MovieApp</string>
-    <string name="movie_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.</string>
+
+    <string name="recommended_to_you">Recommended to you</string>
+    <string name="balance_button">Balance</string>
+
+    <string name="fav_movie">Your saved movies</string>
+    <string name="fav_movie_empty">You don\'t have any saved movies yet</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="your_movies" translatable="false">Your Movies</string>
+    <string name="username">Username</string>
+    <string name="e_mail" translatable="false">E-mail</string>
+    <string name="password">Password</string>
+    <string name="password_check">Password Check</string>
+    <string name="login">LogIn</string>
+    <string name="already_have_an_account_login_here">Already have an account Login Here</string>
+    <string name="log_in">Log In</string>
+    <string name="create_new_account">Create account</string>
+
+
 </resources>

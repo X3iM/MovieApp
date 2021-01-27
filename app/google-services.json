@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "730744746552",
+    "project_id": "movieapp-feaf0",
+    "storage_bucket": "movieapp-feaf0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730744746552:android:681360338ac7bac25c6ccd",
+        "android_client_info": {
+          "package_name": "com.android.hackathon.movieapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "730744746552-bmon73ujbod49majirt5nj9f540jcfco.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxfjwicZ8AVaEgSvaC5c4OcX6MCXkaibA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "730744746552-bmon73ujbod49majirt5nj9f540jcfco.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

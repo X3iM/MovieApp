@@ -1,5 +1,6 @@
 package com.android.hackathon.movieapp.adapters
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +24,7 @@ class MovieAdapter(var onClickListener: OnMovieListener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.moive_list_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
         return ViewHolder(view, onClickListener)
     }
 
@@ -36,7 +37,7 @@ class MovieAdapter(var onClickListener: OnMovieListener) :
 
     override fun getItemCount(): Int {
         if (data != null) {
-            Log.v("Tag", "getItemCount ${data!!.size}")
+//            Log.v("Tag", "getItemCount ${data!!.size}")
             return data!!.size
         }
         return 0
@@ -45,18 +46,21 @@ class MovieAdapter(var onClickListener: OnMovieListener) :
     inner class ViewHolder(itemView: View, private var onClickListener: OnMovieListener) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
-        private var category: TextView = itemView.findViewById(R.id.main_movie_category)
-        private var duration: TextView = itemView.findViewById(R.id.main_movie_duration)
-        private var title: TextView = itemView.findViewById(R.id.main_movie_title)
-        private var image: ImageView = itemView.findViewById(R.id.main_movie_image)
-        private var ratingBar: RatingBar = itemView.findViewById(R.id.main_movie_rating_bar)
+//        private var category: TextView = itemView.findViewById(R.id.main_movie_category)
+//        private var duration: TextView = itemView.findViewById(R.id.main_movie_duration)
+        private var title: TextView = itemView.findViewById(R.id.item_movie_title)
+        private var image: ImageView = itemView.findViewById(R.id.item_movie_image)
+        private var ratingBar: TextView = itemView.findViewById(R.id.item_movie_rate)
 
         fun bind(movie: Movie) {
-            title.text = movie.title
-            Glide.with(itemView.context).load("https://image.tmdb.org/t/p/w500/${movie.poster_path}").into(image)
-            duration.text = "${movie.runtime}"
-            category.text = movie.release_date
-            ratingBar.rating = movie.vote_average / 2
+            if (movie.name != null) title.text = movie.name
+            else title.text = movie.title
+            if (movie.poster_path != null)
+                Glide.with(itemView.context).load("https://image.tmdb.org/t/p/w500/${movie.poster_path}").into(image)
+//            Log.v("Tag", "movie runtime ${movie.runtime}")
+//            duration.text = "${movie.runtime}"
+//            category.text = movie.release_date
+            ratingBar.text = "${movie.vote_average}"
 //            Log.v("Tag", ratingBar.rating.toString())
 
 //            val image = itemView.findViewById<ImageView>(R.id.movie_detail_image)

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="recommended_to_you">Odporúčané pre vás</string>
+    <string name="balance_button">Zostatok</string>
+    <string name="fav_movie">Vaše uložené filmy</string>
+    <string name="fav_movie_empty">Zatiaľ nemáte žiadne uložené filmy</string>
+    <string name="sign_up">Zaregistrovať sa</string>
+    <string name="username">Používateľské meno</string>
+    <string name="password">Heslo</string>
+    <string name="password_check">Kontrola hesla</string>
+    <string name="login">Prihlásiť sa</string>
+    <string name="already_have_an_account_login_here">Máte už účet? Prihlásiť sa tu</string>
+    <string name="log_in">Prihlásiť sa</string>
+    <string name="create_new_account">Vytvoriť účet</string>
+</resources>

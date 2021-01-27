@@ -1,94 +1,168 @@
 package com.android.hackathon.movieapp
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import com.android.hackathon.movieapp.activities.FavoriteActivity
+import com.android.hackathon.movieapp.activities.MovieDetailActivity
+import com.android.hackathon.movieapp.activities.ProfileActivity
 import com.android.hackathon.movieapp.adapters.MovieAdapter
 import com.android.hackathon.movieapp.adapters.OnMovieListener
+import com.android.hackathon.movieapp.adapters.SliderPagerAdapter
 import com.android.hackathon.movieapp.models.Movie
 import com.android.hackathon.movieapp.models.MovieListViewModel
 import com.android.hackathon.movieapp.models.Slide
 import com.android.hackathon.movieapp.request.Services
 import com.android.hackathon.movieapp.response.MovieSearchResponse
 import com.android.hackathon.movieapp.utils.Credentials
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
+import java.util.*
 
 class MainActivity : AppCompatActivity(), OnMovieListener {
 
     private lateinit var movieListViewModel: MovieListViewModel
+    private lateinit var trendsListViewModel: MovieListViewModel
 
     private lateinit var movieAdapter: MovieAdapter
+    private lateinit var sliderPagerAdapter: SliderPagerAdapter
 
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var slidePager: ViewPager
+    private lateinit var timer: Timer
+
+    private lateinit var bottomNavBar: BottomNavigationView
+
     private val slideList = mutableListOf<Slide>()
     private val movieList = mutableListOf<Movie>()
 
-//    private lateinit var slidePager: ViewPager
-//    private lateinit var indicator: TabLayout
+    private lateinit var indicator: TabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main2)
-//        slidePager = findViewById(R.id.slider)
-//        indicator = findViewById(R.id.indicator)
+//        setContentView(R.layout.activity_main2)
+        setContentView(R.layout.activity_main)
 
-        val toolbar = findViewById<Toolbar>(R.id.main_tool_bar)
-        setSupportActionBar(toolbar)
+        slidePager = findViewById(R.id.slider)
 
-        recyclerView = findViewById(R.id.main_recycler_view)
+        movieAdapter = MovieAdapter(this)
+        val movie_recycler_view = findViewById<RecyclerView>(R.id.movie_recycler_view)
+        movie_recycler_view.adapter = movieAdapter
+        movie_recycler_view.layoutManager =
+            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
-        movieListViewModel = ViewModelProvider(this).get(MovieListViewModel::class.java)
+        trendsListViewModel = MovieListViewModel()
+        movieListViewModel = MovieListViewModel()
+        movieListViewModel.searchMovieApi("fast", 1)
+        trendsListViewModel.getTrends()
 
-        prepareRecView()
+        slidePager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+//                Log.v("Tag", "onPageScrolled: position - $position, positionOffset - $positionOffset, positionOffsetPixels - $positionOffsetPixels")
+            }
+
+            override fun onPageSelected(position: Int) {
+//                Log.v("Tag", "onPageSelected: position - $position")
+                if (position % 19 == 0)
+                    trendsListViewModel.trendsNextPage()
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+//                Log.v("Tag", "onPageScrollStateChanged: state - $state")
+            }
+        })
+
+        movie_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    movieListViewModel.searchNextPage()
+                }
+            }
+        })
+
+        sliderPagerAdapter = SliderPagerAdapter(this)
+        slidePager.adapter = sliderPagerAdapter
         observeAnyChange()
+//        val profileFragment = ProfileFragment()
+//        val homeFragment = HomeFragment()
 
-        searchMovieApi("Fast", 1)
+        bottomNavBar = findViewById(R.id.bottom_nav_bar)
+        bottomNavBar.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_fav -> {
+                    startActivity(Intent(this, FavoriteActivity::class.java))
+                    finish()
+                }
+                R.id.nav_person -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    finish()
+                }
+            }
+            true
+        }
 
-//        getRetrofitResponse()
 
-//        slideList.add(Slide("https://upload.wikimedia.org/wikipedia/ru/7/72/Fantasy_Island_%28film%2C_2020%29.jpg", "Остров фантазий"))
-//        slideList.add(Slide("https://upload.wikimedia.org/wikipedia/ru/b/b9/The_Christmas_Chronicles_%28film%2C_2018%29.jpg", "Рождественские хроники"))
-//        slideList.add(Slide("https://upload.wikimedia.org/wikipedia/ru/9/9d/Bloodshot_poster.jpg", "Бладшот"))
-//        slideList.add(Slide("https://upload.wikimedia.org/wikipedia/ru/e/e1/The_Old_Guard_%282020_film%29.jpg", "Бессмертная гвардия"))
+//        val toolbar = findViewById<Toolbar>(R.id.main_tool_bar)
+//        setSupportActionBar(toolbar)
+
+//        recyclerView = findViewById(R.id.main_recycler_view)
+
+
+//        prepareRecView()
+
+//        searchViewSetup()
+//        movieListViewModel.getTrends()
+
+//        movieAdapter.data = movieListViewModel.getMovies().value
+//        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                if (!recyclerView.canScrollVertically(1)) {
+//                    movieListViewModel.trendsNextPage()
+//                }
+//            }
+//        })
+
+
+//        sliderPagerAdapter.data = movieListViewModel.getMovies().value
 //
-//        movieList.add(Movie("Колдовство: Новый ритуал", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.", "https://s.kinokrad.co/uploads/img/6e298da7763129fe1d8e73c9862b6978.jpeg", "https://youtu.be/-6jCNhebfg8"))
-//        movieList.add(Movie("Платформа", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.", "https://upload.wikimedia.org/wikipedia/ru/7/72/El_hoyo_%282019%29.jpg", "https://youtu.be/-6jCNhebfg8"))
-//        movieList.add(Movie("Шестеро вне закона", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.", "https://thumbs.filmix.co/posters/orig/shesteyro-vne-zakona_2019_138413_0.jpg", "https://youtu.be/-6jCNhebfg8"))
-//        movieList.add(Movie("Встреча", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.", "https://thumbs.filmix.co/posters/orig/vstrecha_2018_126131_0.jpg", "https://youtu.be/-6jCNhebfg8"))
-//        movieList.add(Movie("Колдовство: Новый ритуал", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.", "https://s.kinokrad.co/uploads/img/6e298da7763129fe1d8e73c9862b6978.jpeg", "https://youtu.be/-6jCNhebfg8"))
-//        movieList.add(Movie("Платформа", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum massa sem. Maecenas tempus pretium accumsan. Maecenas sit amet accumsan neque, quis euismod massa. Donec mi est, viverra sit amet sollicitudin vitae, volutpat ac odio. Etiam et semper eros, quis malesuada nisi. Mauris gravida turpis a dolor rutrum congue. Sed vestibulum enim eget lectus lacinia, in scelerisque magna aliquam.", "https://upload.wikimedia.org/wikipedia/ru/7/72/El_hoyo_%282019%29.jpg", "https://youtu.be/-6jCNhebfg8"))
-
-//        movieList.add(Movie("Платформа", "", "https://firebasestorage.googleapis.com/v0/b/myunicanteen-2015b.appspot.com/o/chorizo.jpg?alt=media&token=0d64d905-8647-46ca-8a90-5d60ebc03954"))
-//        movieList.add(Movie("Шестеро вне закона", "", "https://firebasestorage.googleapis.com/v0/b/myunicanteen-2015b.appspot.com/o/chorizo.jpg?alt=media&token=0d64d905-8647-46ca-8a90-5d60ebc03954"))
-//        movieList.add(Movie("Встреча", "", "https://firebasestorage.googleapis.com/v0/b/myunicanteen-2015b.appspot.com/o/chorizo.jpg?alt=media&token=0d64d905-8647-46ca-8a90-5d60ebc03954"))
-//        movieList.add(Movie("Колдовство: Новый ритуал", "", "https://firebasestorage.googleapis.com/v0/b/myunicanteen-2015b.appspot.com/o/chorizo.jpg?alt=media&token=0d64d905-8647-46ca-8a90-5d60ebc03954"))
-//        movieList.add(Movie("Платформа", "", "https://firebasestorage.googleapis.com/v0/b/myunicanteen-2015b.appspot.com/o/chorizo.jpg?alt=media&token=0d64d905-8647-46ca-8a90-5d60ebc03954"))
-
-//        val sliderPagerAdapter = SliderPagerAdapter(this, slideList)
-//        slidePager.adapter = sliderPagerAdapter
-//
-//        val timer = Timer()
-//        timer.scheduleAtFixedRate(SliderTask(), 4000, 6000)
+        timer = Timer()
+        timer.scheduleAtFixedRate(SliderTask(), 6000, 6000)
 //
 //        indicator.setupWithViewPager(slidePager, true)
-//
-//        val movieAdapter = MovieAdapter(this, movieList, this)
-//        val movie_recycler_view = findViewById<RecyclerView>(R.id.movie_recycler_view)
-//        movie_recycler_view.adapter = movieAdapter
-//        movie_recycler_view.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
     }
 
-    private fun searchMovieApi(query: String, pageNum: Int) {
-        movieListViewModel.searchMovieApi(query, pageNum)
-    }
+//    private fun searchViewSetup() {
+//        val searchView: androidx.appcompat.widget.SearchView = findViewById(R.id.search_view)
+//
+//        searchView.setOnQueryTextListener(object :
+//            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                movieListViewModel.searchMovieApi(query, 1)
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                return false
+//            }
+//        })
+//    }
+
+//    private fun searchMovieApi(query: String, pageNum: Int) {
+//        movieListViewModel.searchMovieApi(query, pageNum)
+//    }
 
     private fun getRetrofitResponse() {
         val movieApi = Services.getMovieApi()
@@ -138,27 +212,21 @@ class MainActivity : AppCompatActivity(), OnMovieListener {
 //        )
     }
 
-//    inner class SliderTask : TimerTask() {
-//
-//        override fun run() {
-//            runOnUiThread {
-//                if (slidePager.currentItem < slideList.size - 1)
-//                    slidePager.currentItem = slidePager.currentItem + 1
-//                else
-//                    slidePager.currentItem = 0
-//            }
-//        }
-//
-//    }
+    inner class SliderTask : TimerTask() {
 
-    private fun observeAnyChange() {
-        movieListViewModel.getMovies().observe(this, androidx.lifecycle.Observer { movieModels ->
-            movieModels?.forEach { _ ->
-//                Log.v("Tag", "onChange: ${it.title}")
-                movieAdapter.data = movieModels
+        override fun run() {
+            runOnUiThread {
+                if (trendsListViewModel.getMovies().value != null) {
+                    if (slidePager.currentItem < trendsListViewModel.getMovies().value!!.size - 1)
+                        slidePager.currentItem = slidePager.currentItem + 1
+                    else
+                        slidePager.currentItem = 0
+                }
             }
-        })
+        }
+
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -183,19 +251,56 @@ class MainActivity : AppCompatActivity(), OnMovieListener {
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right)
     }
 
-    private fun prepareRecView() {
-        movieAdapter = MovieAdapter(this)
+//    private fun prepareRecView() {
+//        movieAdapter = MovieAdapter(this)
+//
+//        recyclerView.adapter = movieAdapter
+//        recyclerView.layoutManager = LinearLayoutManager(this)
+//    }
 
-        recyclerView.adapter = movieAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+    private fun observeAnyChange() {
+        movieListViewModel.getMovies().observe(this, androidx.lifecycle.Observer { movieModels ->
+            val newList = mutableListOf<List<Movie>>(movieModels)
+            newList.forEach { _ ->
+                movieAdapter.data = movieModels
+            }
+        })
+        trendsListViewModel.getMovies().observe(this, androidx.lifecycle.Observer { movieModels ->
+            movieModels?.forEach { _ ->
+                sliderPagerAdapter.data = movieModels
+            }
+        })
     }
 
     override fun onMovieClick(position: Int) {
-        Toast.makeText(this, movieListViewModel.getMovies().value?.get(position)?.title, Toast.LENGTH_SHORT).show()
+        if (movieListViewModel.getMovies().value != null) {
+            val list = movieListViewModel.getMovies().value
+            val intent = Intent(this, MovieDetailActivity::class.java)
+            intent.putExtra("id", list?.get(position)?.id)
+            intent.putExtra("title", list?.get(position)?.title)
+            intent.putExtra("vote_average", list?.get(position)?.vote_average)
+            intent.putExtra("overview", list?.get(position)?.overview)
+            intent.putExtra("poster_path", list?.get(position)?.poster_path)
+            intent.putExtra("name", list?.get(position)?.name)
+            intent.putExtra("runtime", list?.get(position)?.runtime)
+            intent.putExtra("release_date", list?.get(position)?.release_date)
+            startActivity(intent)
+//
+//        val activityOption = ActivityOptions.makeSceneTransitionAnimation(this, *sharedElements)
+//
+//        startActivity(intent, activityOption.toBundle())
+        }
     }
 
     override fun onCategoryClick(category: String) {
         TODO("Not yet implemented")
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        timer.cancel()
+        viewModelStore.clear()
     }
 
 }

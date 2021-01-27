@@ -2,17 +2,20 @@ package com.android.hackathon.movieapp.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "Movie")
 data class Movie(
-        var movie_id: Int,
-        var title: String?,
-        var movie_overview: String?,
+        @PrimaryKey
+        var id: Int,
+        var name: String?,
+        var overview: String?,
         var release_date: String?,
         var poster_path: String?,
         var vote_average: Float,
-        var runtime: Int
-//        var name: String,
+        var runtime: Int,
+        var title: String?,
 ) : Parcelable {
         constructor(parcel: Parcel) : this(
                 parcel.readInt(),
@@ -21,7 +24,8 @@ data class Movie(
                 parcel.readString(),
                 parcel.readString(),
                 parcel.readFloat(),
-                parcel.readInt()
+                parcel.readInt(),
+                parcel.readString()
         ) {}
 
         override fun describeContents(): Int {
@@ -29,13 +33,14 @@ data class Movie(
         }
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
-                dest.writeInt(movie_id)
-                dest.writeString(title)
-                dest.writeString(movie_overview)
+                dest.writeInt(id)
+                dest.writeString(name)
+                dest.writeString(overview)
                 dest.writeString(release_date)
                 dest.writeString(poster_path)
                 dest.writeFloat(vote_average)
                 dest.writeInt(runtime)
+                dest.writeString(title)
         }
 
         companion object CREATOR : Parcelable.Creator<Movie> {

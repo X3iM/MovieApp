@@ -6,16 +6,16 @@ import com.google.gson.annotations.SerializedName
 
 class MovieSearchResponse {
 
-    @SerializedName("total_results")
+    @SerializedName("total_pages")
     @Expose
-    private var totalCount: Int = 0
+    private var totalPages: Int = 0
 
     @SerializedName("results")
     @Expose
     private lateinit var movieList: List<Movie>
 
-    fun getTotalCount(): Int {
-        return totalCount
+    fun getTotalPages(): Int {
+        return totalPages
     }
 
     fun getMovies(): List<Movie> {
@@ -23,7 +23,7 @@ class MovieSearchResponse {
     }
 
     override fun toString(): String {
-        return "MovieSearchResponse(totalCount=$totalCount, movieList=$movieList)"
+        return "MovieSearchResponse(totalCount=$totalPages, movieList=$movieList)"
     }
 
 
